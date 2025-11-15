@@ -1,0 +1,46 @@
+{
+  "name": "uicp-monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "UICP (UI Component Protocol) - Enable LLM-based agents to describe and render UI components dynamically",
+  "workspaces": [
+    "packages/*",
+    "examples/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces --if-present",
+    "build:parser": "npm run build -w @uicp/parser",
+    "build:tools": "npm run build -w @uicp/tools",
+    "dev:example": "npm run dev -w nextjs-chat",
+    "clean": "npm run clean --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present"
+  },
+  "keywords": [
+    "uicp",
+    "ui-components",
+    "llm",
+    "ai",
+    "dynamic-ui",
+    "component-protocol"
+  ],
+  "author": "UICP Contributors",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/uicp/uicp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/uicp/uicp/issues"
+  },
+  "homepage": "https://github.com/uicp/uicp#readme",
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@typescript-eslint/eslint-plugin": "^6.13.0",
+    "@typescript-eslint/parser": "^6.13.0",
+    "eslint": "^8.54.0",
+    "prettier": "^3.1.0",
+    "typescript": "^5.3.0"
+  }
+}
+

@@ -1,0 +1,93 @@
+{
+  "version": "1.0.0",
+  "components": [
+    {
+      "uid": "SimpleCard",
+      "type": "card",
+      "description": "A simple card component for displaying information with a title, content, and optional footer",
+      "componentPath": "components/uicp/simple-card",
+      "inputs": {
+        "title": {
+          "type": "string",
+          "description": "The card title or heading",
+          "required": true
+        },
+        "content": {
+          "type": "string",
+          "description": "The main content or body text of the card",
+          "required": true
+        },
+        "footer": {
+          "type": "string",
+          "description": "Optional footer text (e.g., timestamp, author, additional info)",
+          "required": false
+        },
+        "variant": {
+          "type": "string",
+          "description": "Visual style variant",
+          "required": false,
+          "default": "default",
+          "enum": ["default", "info", "success", "warning", "error"]
+        }
+      },
+      "example": {
+        "uid": "SimpleCard",
+        "data": {
+          "title": "Welcome to UICP",
+          "content": "This is a simple card component that can display information in a structured format.",
+          "footer": "Created just now",
+          "variant": "info"
+        }
+      }
+    },
+    {
+      "uid": "DataTable",
+      "type": "table",
+      "description": "A component for displaying tabular data with headers and rows",
+      "componentPath": "components/uicp/data-table",
+      "inputs": {
+        "title": {
+          "type": "string",
+          "description": "Table title or caption",
+          "required": false
+        },
+        "headers": {
+          "type": "array",
+          "description": "Array of column header labels",
+          "required": true
+        },
+        "rows": {
+          "type": "array",
+          "description": "Array of row data (each row is an array of cell values)",
+          "required": true
+        },
+        "striped": {
+          "type": "boolean",
+          "description": "Whether to use alternating row colors",
+          "required": false,
+          "default": true
+        },
+        "compact": {
+          "type": "boolean",
+          "description": "Whether to use compact spacing",
+          "required": false,
+          "default": false
+        }
+      },
+      "example": {
+        "uid": "DataTable",
+        "data": {
+          "title": "Sales Report",
+          "headers": ["Product", "Units Sold", "Revenue"],
+          "rows": [
+            ["Widget A", "150", "$3,000"],
+            ["Widget B", "200", "$5,000"],
+            ["Widget C", "75", "$1,500"]
+          ],
+          "striped": true
+        }
+      }
+    }
+  ]
+}
+
