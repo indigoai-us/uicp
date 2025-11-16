@@ -178,6 +178,39 @@ const parsed = await parseUICPContent(content, {
 - [Parser Package](./packages/parser/README.md)
 - [Tools Package](./packages/tools/README.md)
 - [Example App](./examples/nextjs-chat/README.md)
+- [Local Development & Testing Guide](./LOCAL_DEVELOPMENT.md)
+
+## Local Testing
+
+Want to test the packages locally before publishing? We've got you covered!
+
+### Quick Link (Recommended)
+
+```bash
+# Build and link packages
+./scripts/link-local.sh         # Unix/Mac
+.\scripts\link-local.ps1        # Windows
+
+# In your test project
+cd /path/to/your/test-project
+npm link @uicp/parser @uicp/tools
+```
+
+### Development Mode
+
+```bash
+# Terminal 1: Auto-rebuild parser
+cd packages/parser && npm run dev
+
+# Terminal 2: Auto-rebuild tools
+cd packages/tools && npm run dev
+
+# Terminal 3: Run your test project
+cd /path/to/your/test-project
+npm run dev
+```
+
+For detailed testing strategies, troubleshooting, and alternative methods (npm pack, file protocol), see the [Local Development Guide](./LOCAL_DEVELOPMENT.md).
 
 ## Contributing
 

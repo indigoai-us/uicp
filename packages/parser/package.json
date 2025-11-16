@@ -1,6 +1,6 @@
 {
   "name": "@uicp/parser",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "UICP parser for extracting and rendering UI components from LLM output",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
@@ -16,9 +16,10 @@
     "dist",
     "README.md"
   ],
+  "sideEffects": false,
   "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm --dts --clean",
-    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
+    "build": "tsup",
+    "dev": "tsup --watch",
     "clean": "rm -rf dist *.tsbuildinfo"
   },
   "keywords": [
