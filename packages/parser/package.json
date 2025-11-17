@@ -1,6 +1,6 @@
 {
   "name": "@uicp/parser",
-  "version": "0.1.4",
+  "version": "0.2.1",
   "description": "UICP parser for extracting and rendering UI components from LLM output",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",

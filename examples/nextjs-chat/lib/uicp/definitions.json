@@ -5,7 +5,7 @@
       "uid": "SimpleCard",
       "type": "card",
       "description": "A simple card component for displaying information with a title, content, and optional footer",
-      "componentPath": "components/uicp/simple-card",
+      "componentPath": "simple-card",
       "inputs": {
         "title": {
           "type": "string",
@@ -44,7 +44,7 @@
       "uid": "DataTable",
       "type": "table",
       "description": "A component for displaying tabular data with headers and rows",
-      "componentPath": "components/uicp/data-table",
+      "componentPath": "data-table",
       "inputs": {
         "title": {
           "type": "string",

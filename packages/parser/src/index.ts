@@ -43,3 +43,23 @@ export {
   clearDefinitionsCache,
 } from './definitions-loader';
 
+// ========================================
+// SIMPLIFIED API (Recommended)
+// ========================================
+
+// Export React hook
+export {
+  useUICPParser,
+  type UseUICPParserConfig,
+  type UseUICPParserResult,
+} from './react-hook';
+
+// Export React components
+export {
+  UICPContent,
+  UICPProvider,
+  useUICPContext,
+  type UICPContentProps,
+  type UICPProviderProps,
+} from './react-components';
+

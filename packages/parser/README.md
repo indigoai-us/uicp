@@ -19,6 +19,32 @@ npm install @uicp/parser
 
 ## Quick Start
 
+### ⭐ Simplified API (Recommended)
+
+The easiest way to use UICP - just one component, automatic component loading:
+
+```tsx
+import { UICPContent } from '@uicp/parser';
+import ReactMarkdown from 'react-markdown';
+
+function Message({ content }) {
+  return (
+    <UICPContent
+      content={content}
+      definitions="/lib/uicp/definitions.json"
+      componentsBasePath="/components/uicp"
+      textRenderer={(text) => <ReactMarkdown>{text}</ReactMarkdown>}
+    />
+  );
+}
+```
+
+**That's it!** Components are loaded automatically from your definitions file. No manual imports, no registration, no parsing logic.
+
+### Advanced API
+
+For more control, use the lower-level API:
+
 ```typescript
 import {
   parseUICPContent,
@@ -50,7 +76,71 @@ parsed.forEach((item) => {
 
 ## API Reference
 
-### Core Functions
+### Simplified API
+
+#### `<UICPContent />`
+
+Ready-to-use React component that handles everything automatically.
+
+```tsx
+<UICPContent
+  content={message.content}
+  definitions="/lib/uicp/definitions.json"
+  componentsBasePath="/components/uicp"
+  textRenderer={(text) => <ReactMarkdown>{text}</ReactMarkdown>}
+  componentWrapper={(component) => <div className="my-2">{component}</div>}
+  loading={<Spinner />}
+  fallback={<ErrorMessage />}
+/>
+```
+
+**Props:**
+- `content: string` - Content to parse (may contain UICP blocks)
+- `definitions: string | Definitions` - Path/URL to definitions or object
+- `componentsBasePath?: string` - Base path for components (default: `/components/uicp`)
+- `textRenderer?: (text: string) => ReactNode` - Custom text renderer
+- `componentWrapper?: (component: ReactElement) => ReactNode` - Wrapper for components
+- `loading?: ReactNode` - Show while parsing
+- `fallback?: ReactNode` - Show on error
+
+#### `useUICPParser(config)`
+
+React hook for programmatic parsing with automatic component loading.
+
+```tsx
+const { parse, hasBlocks, definitions, isLoading, error } = useUICPParser({
+  definitions: '/lib/uicp/definitions.json',
+  componentsBasePath: '/components/uicp',
+});
+
+const parsedContent = await parse(message.content);
+```
+
+**Config:**
+- `definitions: string | Definitions` - Path/URL to definitions or object
+- `componentsBasePath?: string` - Base path for components (default: `/components/uicp`)
+
+**Returns:**
+- `parse: (content: string) => Promise<ParsedContent[]>` - Parse function
+- `hasBlocks: (content: string) => boolean` - Check for UICP blocks
+- `definitions: Definitions | null` - Loaded definitions
+- `isLoading: boolean` - Loading state
+- `error: Error | null` - Error if failed to load
+
+#### `<UICPProvider />`
+
+Optional provider for setting default config across your app.
+
+```tsx
+<UICPProvider 
+  definitions="/lib/uicp/definitions.json"
+  componentsBasePath="/components/uicp"
+>
+  <ChatInterface />
+</UICPProvider>
+```
+
+### Core Functions (Advanced API)
 
 #### `parseUICPContent(content, config)`
 
@@ -232,24 +322,95 @@ interface ParserConfig {
 
 ## Usage Patterns
 
-### With Next.js
+### With Next.js (Simplified)
 
-```typescript
+**Step 1:** Create a registry file to pre-register your components:
+
+```tsx
+// lib/uicp/registry.ts
+import { registerComponent } from '@uicp/parser';
+import { SimpleCard } from '@/components/uicp/simple-card';
+import { DataTable } from '@/components/uicp/data-table';
+
+// Pre-register all UICP components
+registerComponent('SimpleCard', SimpleCard);
+registerComponent('DataTable', DataTable);
+```
+
+**Step 2:** Use `UICPContent` in your message component:
+
+```tsx
 // components/message.tsx
 'use client';
 
-import { parseUICPContentSync, registerComponent } from '@uicp/parser';
-import { SimpleCard } from './uicp/simple-card';
-import definitions from '@/lib/definitions.json';
-
-registerComponent('SimpleCard', SimpleCard);
+import { UICPContent } from '@uicp/parser';
+import ReactMarkdown from 'react-markdown';
+import definitions from '@/lib/uicp/definitions.json';
+import '@/lib/uicp/registry'; // Import to register components
 
 export function Message({ content }) {
-  const parsed = parseUICPContentSync(content, definitions);
+  return (
+    <UICPContent
+      content={content}
+      definitions={definitions}
+      textRenderer={(text) => <ReactMarkdown>{text}</ReactMarkdown>}
+    />
+  );
+}
+```
+
+**That's it!** The `UICPContent` component handles everything: checking for UICP blocks, parsing, and rendering components or text as needed.
+
+**Important for Next.js:** Pre-registering components ensures they're properly bundled by webpack. Dynamic imports at runtime don't work reliably in Next.js production builds.
+
+### With Provider Pattern (For Multiple Messages)
+
+```tsx
+// app/layout.tsx or chat wrapper
+import { UICPProvider } from '@uicp/parser';
+import definitions from '@/lib/uicp/definitions.json';
+
+export function ChatLayout({ children }) {
+  return (
+    <UICPProvider
+      definitions={definitions}
+      componentsBasePath="/components/uicp"
+    >
+      {children}
+    </UICPProvider>
+  );
+}
+
+// components/message.tsx - even simpler!
+import { UICPContent } from '@uicp/parser';
+
+export function Message({ content }) {
+  return <UICPContent content={content} />;
+}
+```
+
+### With Programmatic Parsing (Hook)
+
+```tsx
+import { useUICPParser } from '@uicp/parser';
+
+export function Message({ content }) {
+  const { parse, hasBlocks } = useUICPParser({
+    definitions: '/lib/uicp/definitions.json',
+    componentsBasePath: '/components/uicp',
+  });
+  
+  const [parsed, setParsed] = useState([]);
+  
+  useEffect(() => {
+    if (hasBlocks(content)) {
+      parse(content).then(setParsed);
+    }
+  }, [content, parse, hasBlocks]);
   
   return (
     <div>
-      {parsed.map((item) =>
+      {parsed.map((item) => 
         item.type === 'component' ? (
           <div key={item.key}>{item.content}</div>
         ) : (
@@ -261,28 +422,20 @@ export function Message({ content }) {
 }
 ```
 
-### With Dynamic Imports
+### Advanced: Manual Registration
+
+For maximum performance, pre-register components:
 
 ```typescript
-// Let parser handle dynamic loading
-const parsed = await parseUICPContent(content, {
-  definitions: './definitions.json',
-  componentsBasePath: '/components/uicp',
-});
-```
-
-### Pre-registration for Performance
-
-```typescript
-// Register all components at startup
-import { registerComponent } from '@uicp/parser';
+import { registerComponent, parseUICPContentSync } from '@uicp/parser';
 import { SimpleCard } from './components/simple-card';
 import { DataTable } from './components/data-table';
 
+// Register once at app startup
 registerComponent('SimpleCard', SimpleCard);
 registerComponent('DataTable', DataTable);
 
-// Now use sync parsing
+// Use sync parsing (no dynamic imports)
 const parsed = parseUICPContentSync(content, definitions);
 ```
 
@@ -298,6 +451,25 @@ const parsed = await parseUICPContent(content, {
   componentsBasePath: '/my-custom-path',
 });
 ```
+
+### Definitions File Structure
+
+The `componentPath` in your definitions.json should be **relative to the `componentsBasePath`**:
+
+```json
+{
+  "version": "1.0.0",
+  "components": [
+    {
+      "uid": "SimpleCard",
+      "componentPath": "simple-card",  // relative path, not "components/uicp/simple-card"
+      ...
+    }
+  ]
+}
+```
+
+If your component is at `/components/uicp/simple-card.tsx` and `componentsBasePath` is `/components/uicp`, then `componentPath` should be `"simple-card"`.
 
 ### Definitions Source
 
