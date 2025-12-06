@@ -39,6 +39,8 @@ UICP has two main packages:
 npm install @uicp/parser @uicp/tools
 ```
 
+**Security Note**: If using Next.js, ensure you have version **15.0.5 or later** to address CVE-2025-55182 (critical RCE vulnerability). Earlier versions are not secure.
+
 ### Step 2: Choose Your Scenario
 
 **Scenario A**: You have NO existing custom chat UI components
@@ -684,9 +686,11 @@ Next.js may warn about dynamic imports. This is expected and safe - it's how UIC
 
 ### Next.js
 
+- **Minimum version required**: Next.js 15.0.5+ (for CVE-2025-55182 security patch)
+- React 19+ required with Next.js 15+
 - Use `'use client'` directive in message component
 - Definitions import works with `resolveJsonModule: true` in tsconfig
-- No special configuration needed
+- No special configuration needed beyond security requirements
 
 ### Create React App
 
